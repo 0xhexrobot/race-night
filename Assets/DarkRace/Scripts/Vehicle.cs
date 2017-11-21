@@ -19,7 +19,7 @@ public class Vehicle : MonoBehaviour {
         float newX = transform.position.x + velocity * Time.deltaTime;
         transform.position = new Vector3(newX, 0, transform.position.z);
 
-        if(velocity > 0.05f) {
+        if(velocity > 0.1f) {
             velocity *= 0.98f;
         } else {
             velocity = 0;
@@ -28,5 +28,9 @@ public class Vehicle : MonoBehaviour {
 
     public void accelerate(float accelFactor) {
         realAccel = accel * accelFactor;
+    }
+
+    public void stopAccel() {
+        realAccel = 0;
     }
 }

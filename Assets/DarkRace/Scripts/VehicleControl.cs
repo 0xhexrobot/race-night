@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(Vehicle))]
 public abstract class VehicleControl : MonoBehaviour {
     public bool accelerating = false;
 

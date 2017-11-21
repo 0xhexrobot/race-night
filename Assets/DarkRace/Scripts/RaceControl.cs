@@ -4,15 +4,21 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class RaceControl : MonoBehaviour {
+    public static RaceControl instance = null;
+    public int raceIndex = 0;
     public float goalX = 0;
     [SerializeField]
     private Vehicle[] vehicles;
     private bool someoneWon = false;
+    private Vehicle winner = null;
+
+    void Awake() {
+        instance = this;
+    }
 
     void Start() {
         UIManager.instance.uiMiniMap.setRaceInfo(vehicles, goalX);
         StartCoroutine(startRace());
-
     }
 
     private IEnumerator startRace() {
@@ -30,7 +36,8 @@ public class RaceControl : MonoBehaviour {
             UIManager.instance.uiMiniMap.updateVehicles();
 
             foreach(Vehicle vehicle in vehicles) {
-                if(vehicle.transform.position.x > goalX) {
+                if(vehicle.transform.position.x + 1.0f > goalX) {
+                    winner = vehicle;
                     endRace();
                     break;
                 }
@@ -44,17 +51,30 @@ public class RaceControl : MonoBehaviour {
         Debug.Log("Someone won!");
         someoneWon = true;
 
+        UIManager.instance.normalUi.GetComponent<Animator>().SetTrigger("raceEnd");
+
         foreach(Vehicle vehicle in vehicles) {
             vehicle.GetComponent<VehicleControl>().stopAcceleration();
-            vehicle.accel = 0;
+            vehicle.stopAccel();
         }
 
-        //StartCoroutine(restartScene());
+        StartCoroutine(showUi());
     }
 
-    public IEnumerator restartScene() {
-        yield return new WaitForSeconds(10.0f);
+    public IEnumerator showUi() {
+        yield return new WaitForSeconds(3.0f);
 
+        UIManager.instance.endUI.GetComponent<Animator>().SetTrigger("showWinLose");
+
+        // player won?
+        if(winner.GetComponent<PlayerControl>() != null) {
+            UIManager.instance.winElements.SetActive(true);
+        } else {
+            UIManager.instance.loseElements.SetActive(true);
+        }
+    }
+
+    public void restartRace() {
         SceneManager.LoadScene("gameplay");
     }
 }
