@@ -7,11 +7,11 @@ public class PlayerControl : VehicleControl {
     private float accumAxis = 0;
     private float accumAxisChange = 0.05f;
     private Transmission transmission;
-    private float tolerance = 0.1f;
+    private float tolerance;
 
     void Start() {
-        transmission = new Transmission();
-        UIManager.instance.uiTransmission.setTolerance(tolerance);
+        transmission = GetComponent<Transmission>();
+        updateTransmissionUi();
     }
 
     public override IEnumerator accelerate() {
@@ -23,9 +23,7 @@ public class PlayerControl : VehicleControl {
             float accelPercent = (1.0f - Mathf.Abs(transmission.transmissionValue)) / (1.0f - tolerance);
             accelPercent = Mathf.Min(accelPercent, 1.0f);
 
-            Debug.LogFormat("Transmission: {0}, accel %: {1}", transmission.transmissionValue, accelPercent);
-
-            GetComponent<Vehicle>().accelerate(accelPercent);
+            GetComponent<Vehicle>().updateAccelFactor(accelPercent);
 
             transmission.update();
 
@@ -42,15 +40,32 @@ public class PlayerControl : VehicleControl {
             }
 
             UIManager.instance.uiTransmission.setValue(transmission.transmissionValue);
-            //km per h
-            int realVelocity = Mathf.RoundToInt(GetComponent<Vehicle>().velocity * 3.6f);
-            UIManager.instance.txtVelocity.text = realVelocity.ToString();
+
+            float velocity = GetComponent<Vehicle>().velocity;
+            int velocityKm = Mathf.RoundToInt(velocity * 3.6f);
+            // int velocityMi = Mathf.RoundToInt(velocity * 2.23f);
 
             yield return new WaitForEndOfFrame();
+
+            bool nextPhaseReady = transmission.getSpeedToNextPhase() != -1 && velocity > transmission.getSpeedToNextPhase();
+            int nextPhase = transmission.getCurrentPhase() + 2;
+
+            //update ui
+            UIManager.instance.uiTransmission.showLblReady(nextPhaseReady);
+            UIManager.instance.uiTransmission.setLblReadyPhase(nextPhase);
+            UIManager.instance.txtVelocity.text = velocityKm.ToString() + " (" + velocity.ToString("0.#") + ")";
         }
     }
 
     void Update() {
+        if(Input.GetButtonDown("Fire1")) {
+            bool changedPhase = GetComponent<Vehicle>().tryToChangeTransmissionPhase();
+
+            if(changedPhase) {
+                updateTransmissionUi();
+            }
+        }
+
         //create new floor
         if(lastFloorX - transform.position.x < 20) {
             string prefabName;
@@ -65,5 +80,10 @@ public class PlayerControl : VehicleControl {
             GameObject floorObject = ObjectPool.instance.getObjectForType(prefabName);
             floorObject.transform.position = new Vector3(lastFloorX, 0, 0);
         }
+    }
+
+    private void updateTransmissionUi() {
+        tolerance = transmission.getTransmissionPhase().tolerance;
+        UIManager.instance.uiTransmission.setTolerance(tolerance);
     }
 }

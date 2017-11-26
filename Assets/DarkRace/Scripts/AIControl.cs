@@ -8,7 +8,7 @@ public class AIControl : VehicleControl {
         yield return new WaitForSeconds(1.0f);
 
         while(accelerating) {
-            GetComponent<Vehicle>().accelerate(1.0f);
+            GetComponent<Vehicle>().updateAccelFactor(1.0f);
 
             yield return new WaitForEndOfFrame();
         }

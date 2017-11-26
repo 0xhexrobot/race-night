@@ -3,6 +3,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Vehicle))]
 public abstract class VehicleControl : MonoBehaviour {
+    [HideInInspector]
     public bool accelerating = false;
 
     public void startAccel() {

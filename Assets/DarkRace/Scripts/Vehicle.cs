@@ -2,35 +2,76 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Transmission))]
 public class Vehicle : MonoBehaviour {
-    public float accel = 0.2f;
     [HideInInspector]
     public float velocity = 0;
-    public float maxVelocity = 20.0f;
     private float realAccel = 0;
+    private TransmissionPhase transmissionPhase;
+    private float accelFactor = 0;
+
+    void Start() {
+        transmissionPhase = GetComponent<Transmission>().getTransmissionPhase();
+    }
 
     void Update() {
-        if(velocity > maxVelocity) {
-            velocity = maxVelocity;
+        if(velocity > transmissionPhase.maxVelocity) {
+            velocity = transmissionPhase.maxVelocity;
         } else {
             velocity += realAccel;
         }
+
+        //accelerate
+        realAccel = transmissionPhase.accel * accelFactor;
 
         float newX = transform.position.x + velocity * Time.deltaTime;
         transform.position = new Vector3(newX, 0, transform.position.z);
 
         if(velocity > 0.1f) {
-            velocity *= 0.98f;
+            velocity *= 0.99f;
         } else {
             velocity = 0;
         }
     }
 
-    public void accelerate(float accelFactor) {
-        realAccel = accel * accelFactor;
+    public bool tryToChangeTransmissionPhase() {
+        bool changedPhase = false;
+        Debug.Log(gameObject.name + " tries to change t. phase.");
+        Transmission transmission = GetComponent<Transmission>();
+
+        if(velocity >= transmissionPhase.speedToNextPhase && transmission.hasNextPhase()) {
+            Debug.Log("Success. Change speed");
+
+            if(transmission.hasNextPhase()) {
+                transmission.upgradeToNextPhase();
+                changedPhase = true;
+            }
+        } else {
+            Debug.Log("Failure. Reset accel.");
+
+            if(transmission.hasPrevPhase()) {
+                transmission.downgradeToPrevPhase();
+                changedPhase = true;
+                //velocity penalty
+                velocity *= 0.9f;
+            }
+        }
+
+        transmissionPhase = transmission.getTransmissionPhase();
+
+        return changedPhase;
+    }
+
+    public void updateAccelFactor(float accelFactor) {
+        this.accelFactor = accelFactor;
     }
 
     public void stopAccel() {
+        accelFactor = 0;
         realAccel = 0;
+    }
+
+    public void setTransmissionPhase(TransmissionPhase transmissionPhase) {
+        this.transmissionPhase = transmissionPhase;
     }
 }

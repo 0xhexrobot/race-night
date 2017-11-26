@@ -9,6 +9,8 @@ public class RaceControl : MonoBehaviour {
     public float goalX = 0;
     [SerializeField]
     private Vehicle[] vehicles;
+    [SerializeField]
+    private Vehicle[] aiRivals;
     private bool someoneWon = false;
     private Vehicle winner = null;
 
@@ -48,7 +50,6 @@ public class RaceControl : MonoBehaviour {
     }
 
     public void endRace() {
-        Debug.Log("Someone won!");
         someoneWon = true;
 
         UIManager.instance.normalUi.GetComponent<Animator>().SetTrigger("raceEnd");
