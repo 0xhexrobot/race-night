@@ -3,22 +3,40 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class RaceControl : MonoBehaviour {
-    public static RaceControl instance = null;
+public class RaceManager : MonoBehaviour {
+    public static RaceManager instance = null;
     public int raceIndex = 0;
     public float goalX = 0;
     [SerializeField]
-    private Vehicle[] vehicles;
+    private Vehicle playerVehicle;
     [SerializeField]
     private Vehicle[] aiRivals;
+    [SerializeField]
+    private GameObject settingsPrefab;
+    private Vehicle[] vehicles;
     private bool someoneWon = false;
     private Vehicle winner = null;
+    private Settings settings;
 
     void Awake() {
         instance = this;
     }
 
     void Start() {
+        // create settings object if it doesn't exist
+        if(GameObject.Find("settings") != null) {
+            settings = GameObject.Find("settings").GetComponent<Settings>();
+        } else {
+            GameObject settingsObject = Instantiate(settingsPrefab) as GameObject;
+            settingsObject.name = "settings";
+            settings = settingsObject.GetComponent<Settings>();
+        }
+
+        // initialize vehicles
+        vehicles = new Vehicle[2];
+        vehicles[0] = playerVehicle;
+        vehicles[1] = Instantiate(aiRivals[settings.currentRace]);
+
         UIManager.instance.uiMiniMap.setRaceInfo(vehicles, goalX);
         StartCoroutine(startRace());
     }
@@ -77,5 +95,14 @@ public class RaceControl : MonoBehaviour {
 
     public void restartRace() {
         SceneManager.LoadScene("gameplay");
+    }
+
+    public void toNextRace() {
+        if(settings.currentRace + 1 < aiRivals.Length) {
+            settings.currentRace++;
+            SceneManager.LoadScene("gameplay");
+        } else {
+            Debug.Log("To trophy scene.");
+        }
     }
 }

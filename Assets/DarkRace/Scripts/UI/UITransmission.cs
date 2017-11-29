@@ -9,6 +9,8 @@ public class UITransmission : MonoBehaviour {
     private RectTransform tolerance;
     [SerializeField]
     private GameObject lblReady;
+    [SerializeField]
+    private Text txtTransmissionNumber;
 
     public void setValue(float value) {
         indicator.localPosition = new Vector3(value * UI_TRANSMISSION_WIDTH * 0.5f, 0, 0);
@@ -16,6 +18,10 @@ public class UITransmission : MonoBehaviour {
 
     public void setTolerance(float tolerance) {
         this.tolerance.sizeDelta = new Vector2(UI_TRANSMISSION_WIDTH * tolerance, this.tolerance.sizeDelta.y);
+    }
+
+    public void setPhaseNumber(int phaseNumber) {
+        txtTransmissionNumber.text = phaseNumber.ToString();
     }
 
     public void showLblReady(bool show) {

@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 4bdf7ce1c03d6437988d9aede733a5c5
-timeCreated: 1510280506
+guid: 77c74efbece6a4b92a768ca708ad47fc
+timeCreated: 1511807380
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -9,7 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Cube
+    4300000: vehicle
   materials:
     importMaterials: 1
     materialName: 0

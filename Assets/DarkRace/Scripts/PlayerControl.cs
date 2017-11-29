@@ -47,13 +47,13 @@ public class PlayerControl : VehicleControl {
 
             yield return new WaitForEndOfFrame();
 
-            bool nextPhaseReady = transmission.getSpeedToNextPhase() != -1 && velocity > transmission.getSpeedToNextPhase();
+            bool nextPhaseReady = transmission.getVelocityToNextPhase() != -1 && velocity > transmission.getVelocityToNextPhase();
             int nextPhase = transmission.getCurrentPhase() + 2;
 
             //update ui
             UIManager.instance.uiTransmission.showLblReady(nextPhaseReady);
             UIManager.instance.uiTransmission.setLblReadyPhase(nextPhase);
-            UIManager.instance.txtVelocity.text = velocityKm.ToString() + " (" + velocity.ToString("0.#") + ")";
+            UIManager.instance.txtVelocity.text = velocityKm.ToString();
         }
     }
 
@@ -71,7 +71,7 @@ public class PlayerControl : VehicleControl {
             string prefabName;
             lastFloorX += 20;
 
-            if(lastFloorX == RaceControl.instance.goalX) {
+            if(lastFloorX == RaceManager.instance.goalX) {
                 prefabName = "floorLine";
             } else {
                 prefabName = "floor";
@@ -85,5 +85,6 @@ public class PlayerControl : VehicleControl {
     private void updateTransmissionUi() {
         tolerance = transmission.getTransmissionPhase().tolerance;
         UIManager.instance.uiTransmission.setTolerance(tolerance);
+        UIManager.instance.uiTransmission.setPhaseNumber(transmission.getCurrentPhase() + 1);
     }
 }

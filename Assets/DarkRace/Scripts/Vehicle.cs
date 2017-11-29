@@ -6,6 +6,8 @@ using UnityEngine;
 public class Vehicle : MonoBehaviour {
     [HideInInspector]
     public float velocity = 0;
+    [SerializeField]
+    private Transform[] tires;
     private float realAccel = 0;
     private TransmissionPhase transmissionPhase;
     private float accelFactor = 0;
@@ -25,7 +27,11 @@ public class Vehicle : MonoBehaviour {
         realAccel = transmissionPhase.accel * accelFactor;
 
         float newX = transform.position.x + velocity * Time.deltaTime;
-        transform.position = new Vector3(newX, 0, transform.position.z);
+        transform.position = new Vector3(newX, transform.position.y, transform.position.z);
+
+        foreach(Transform tireTransform in tires) {
+            tireTransform.Rotate(velocity * Time.deltaTime * 180.0f, 0, 0);
+        }
 
         if(velocity > 0.1f) {
             velocity *= 0.99f;
@@ -36,19 +42,12 @@ public class Vehicle : MonoBehaviour {
 
     public bool tryToChangeTransmissionPhase() {
         bool changedPhase = false;
-        Debug.Log(gameObject.name + " tries to change t. phase.");
         Transmission transmission = GetComponent<Transmission>();
 
         if(velocity >= transmissionPhase.speedToNextPhase && transmission.hasNextPhase()) {
-            Debug.Log("Success. Change speed");
-
-            if(transmission.hasNextPhase()) {
-                transmission.upgradeToNextPhase();
-                changedPhase = true;
-            }
+            transmission.upgradeToNextPhase();
+            changedPhase = true;
         } else {
-            Debug.Log("Failure. Reset accel.");
-
             if(transmission.hasPrevPhase()) {
                 transmission.downgradeToPrevPhase();
                 changedPhase = true;

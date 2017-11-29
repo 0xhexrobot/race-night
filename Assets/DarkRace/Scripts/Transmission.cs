@@ -50,7 +50,7 @@ public class Transmission : MonoBehaviour {
         return transmissionPhases[currentPhase].accel;
     }
 
-    public float getSpeedToNextPhase() {
+    public float getVelocityToNextPhase() {
         return transmissionPhases[currentPhase].speedToNextPhase;
     }
 
