@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 
 public class UIMiniMap : MonoBehaviour {
-    private const float MINIMAP_WIDTH = 300.0f;
+    private const float MINIMAP_WIDTH = 200.0f;
     [SerializeField]
     private Image[] imgVehicles;
     private Vehicle[] vehicles;

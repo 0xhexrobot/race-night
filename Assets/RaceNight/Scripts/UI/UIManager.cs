@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour {
     public UIMiniMap uiMiniMap;
     public Text txtVelocity;
     public Text txtCounter;
+    public Text txtLives;
     [Header("End UI")]
     public RectTransform endUI;
     public GameObject winElements;

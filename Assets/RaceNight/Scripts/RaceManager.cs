@@ -37,6 +37,8 @@ public class RaceManager : MonoBehaviour {
         vehicles[1] = Instantiate(aiRivals[settings.currentRace]);
 
         UIManager.instance.uiMiniMap.setRaceInfo(vehicles, goalX);
+        UIManager.instance.txtLives.text = "x " + settings.livesLeft;
+
         StartCoroutine(startRace());
     }
 
@@ -97,18 +99,23 @@ public class RaceManager : MonoBehaviour {
     public IEnumerator showUi() {
         yield return new WaitForSeconds(3.0f);
 
-        UIManager.instance.endUI.GetComponent<Animator>().SetTrigger("showWinLose");
-
         // player won?
         if(winner.GetComponent<PlayerControl>() != null) {
             UIManager.instance.winElements.SetActive(true);
         } else {
             UIManager.instance.loseElements.SetActive(true);
+            settings.livesLeft--;
         }
+
+        UIManager.instance.endUI.GetComponent<Animator>().SetTrigger("showWinLose");
     }
 
     public void restartRace() {
-        SceneManager.LoadScene("gameplay");
+        if(settings.livesLeft >= 0) {
+            SceneManager.LoadScene("gameplay");
+        } else {
+            SceneManager.LoadScene("title");
+        }
     }
 
     public void toNextRace() {

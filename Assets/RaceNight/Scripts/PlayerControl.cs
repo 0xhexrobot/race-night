@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerControl : VehicleControl {
-    private const float ACCUM_AXIS_CHANGE = 0.045f;
+    private const float ACCUM_AXIS_CHANGE = 0.03f;
     private const float FAIL_ZONE = 0.0025f;
     private float lastFloorX = 20;
     private float accumAxis = 0;

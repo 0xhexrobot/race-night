@@ -5,7 +5,7 @@ public class Transmission : MonoBehaviour {
     public TransmissionPhase[] transmissionPhases;
     [HideInInspector]
     public float transmissionValue = 0;
-    private const float RADIANS_CHANGE = 0.045f;
+    private const float RADIANS_CHANGE = 0.025f;
     private float radians = 0;
     private int currentPhase = 0;
 
